@@ -1,0 +1,59 @@
+{
+  "lesson_id": "SABISNAP-LES-CE7D374C",
+  "curriculum_code": "NERDC-MTH-PRI5-T1-W4",
+  "topic": "Addition of Fractions with Unlike Denominators",
+  "grade_level": "Primary 5",
+  "avatar": "Baba Tutor (3D Stylized Nigerian Teacher Avatar)",
+  "pedagogical_framework": "Google LearnLM / NERDC National Basic Education Framework",
+  "total_runtime_seconds": 180,
+  "scenes": [
+    {
+      "scene_number": 1,
+      "timestamp": "00:00 - 00:30",
+      "phase": "Hook & Cultural Framing",
+      "baba_tutor_pose": "Warm greeting, holding magnifying glass",
+      "audio_narration": "Sannu, ekaaro, ndewo class! Welcome back! Today in Primary 5, Baba Tutor is taking you on an exciting visual journey into Addition of Fractions with Unlike Denominators! Look closely at the screen as we unlock this together.",
+      "visual_asset_triggers": [
+        "classroom_3d_chalkboard",
+        "baba_tutor_wave_gesture",
+        "topic_banner_3d"
+      ]
+    },
+    {
+      "scene_number": 2,
+      "timestamp": "00:30 - 01:45",
+      "phase": "Core Concept Breakdown (LearnLM Scaffolding)",
+      "baba_tutor_pose": "Interactive presenter, pointing at 3D animated diagram",
+      "audio_narration": "Under official curriculum standard NERDC-MTH-PRI5-T1-W4, let us break down the core mechanics step-by-step: Step 1: Define unlike denominators in fractions. Step 2: Determine the Lowest Common Multiple (LCM) of denominators. Step 3: Convert fractions to equivalent fractions using common denominators.",
+      "visual_asset_triggers": [
+        "animated_diagram_exploded_view",
+        "dynamic_formula_callout",
+        "interactive_particles"
+      ]
+    },
+    {
+      "scene_number": 3,
+      "timestamp": "01:45 - 02:30",
+      "phase": "Real-World Nigerian Classroom Context",
+      "baba_tutor_pose": "Storyteller mode, displaying everyday objects",
+      "audio_narration": "Why does this matter in real life? Whether we are observing the green leaves on a mango tree or sharing a fresh loaf of Agege bread among friends, mathematics and science govern everything we touch!",
+      "visual_asset_triggers": [
+        "nigerian_realworld_3d_props",
+        "student_relatable_scenario"
+      ]
+    },
+    {
+      "scene_number": 4,
+      "timestamp": "02:30 - 03:00",
+      "phase": "Terminal Knowledge Check & Review",
+      "baba_tutor_pose": "Thumbs-up celebratory gesture",
+      "audio_narration": "Fantastic job class! Now take out your exercise books and answer Baba Tutor's quick challenge on screen. Remember: SabiSnap makes every lesson crystal clear. You sabi am well well!",
+      "visual_asset_triggers": [
+        "quiz_card_3d_overlay",
+        "baba_tutor_applause_animation",
+        "countdown_timer_60s"
+      ]
+    }
+  ],
+  "generated_timestamp": "2026-10-23T14:38:07.770148"
+}

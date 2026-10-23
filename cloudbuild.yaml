@@ -1,0 +1,46 @@
+# ==============================================================================
+# SabiSnap Ltd (RC 9414613) — Cloud Build CI/CD Pipeline
+# Service: Google Cloud Run Serverless ADK Engine
+# Immersion Session 3 Alignment: Scale with Confidence (Zack Akil)
+# ==============================================================================
+
+steps:
+  # 1. Build the container image using Cloud Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/sabisnap-adk-engine:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/sabisnap-adk-engine:latest'
+      - '.'
+
+  # 2. Push image to Google Artifact / Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/sabisnap-adk-engine:$COMMIT_SHA'
+
+  # 3. Deploy to Google Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'sabisnap-adk-engine'
+      - '--image=gcr.io/$PROJECT_ID/sabisnap-adk-engine:$COMMIT_SHA'
+      - '--region=europe-west1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--memory=2Gi'
+      - '--cpu=2'
+      - '--min-instances=0'
+      - '--max-instances=10'
+      - '--set-env-vars=GOOGLE_GENAI_USE_VERTEXAI=TRUE,GOOGLE_CLOUD_LOCATION=europe-west1'
+
+images:
+  - 'gcr.io/$PROJECT_ID/sabisnap-adk-engine:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/sabisnap-adk-engine:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
