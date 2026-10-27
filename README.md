@@ -59,22 +59,39 @@ graph TD
 
 ---
 
-## 3. Serverless Cloud Run Deployment
+## 3. Serverless Cloud Run Deployment & Concurrency Governance
 
-The engine is fully containerized and configured for automated CI/CD deployment to Google Cloud Run:
+*(Architectural Alignment: Immersion Session 3 with Zack Akil, Google Cloud)*
+
+The engine is fully containerized and configured for automated CI/CD deployment to Google Cloud Run with strict concurrency governance to handle burst loads without quota throttling:
 
 * **Container:** [`Dockerfile`](Dockerfile) based on `python:3.11-slim`.
 * **CI/CD:** [`cloudbuild.yaml`](cloudbuild.yaml) automating build, push to Google Artifact Registry, and deployment to Cloud Run.
+* **Concurrency Governance (`--concurrency=1`, `--max-instances=5`):** Each container instance handles exactly one heavy multimodal document at a time, while maximum instances are bounded to prevent upstream Gemini API rate-limit throttling (HTTP 429) during burst school onboarding.
+* **Lossless Event Buffering:** Ingestion events from Google Cloud Storage trigger through an Eventarc / Pub/Sub messaging queue. Scans are buffered in the queue rather than dropped, allowing Cloud Run workers to pull at a governed rate.
+* **Deterministic vs. Probabilistic Division:** Following Google Cloud's core tenet (*"Code for math, Gemini for document reading"*), deterministic Python hashing handles curriculum code matching and offline checksums, while Gemini handles multimodal visual reasoning.
 * **Scale-to-Zero:** Serverless architecture ensuring zero idle compute costs.
 * **Observability:** Integrated with Google Cloud Trace and Cloud Logging via OpenTelemetry (`google-adk[otel-gcp]`).
 
 ---
 
-## 4. Repository Structure
+## 4. Asynchronous Curriculum Compilation (Gemini Batch API)
+
+For nationwide school onboarding, real-time sub-second inference is neither required nor cost-optimal. SabiSnap incorporates the **Google Gemini Batch API** ([`sabisnap_batch_compiler.py`](sabisnap_batch_compiler.py)):
+
+* **50% Token Cost Discount:** Entire 12-week national term syllabi are submitted via JSONL batch manifests, slashing API compute expenses by half.
+* **Zero Rate Limit Pressure:** Batch workloads run asynchronously within Google Cloud without consuming real-time Requests Per Minute (RPM) quotas.
+* **Overnight Edge Cache Sync:** Pre-compiled `.sabisnap.json` lesson bundles are stored directly in Cloud Storage for one-touch offline caching on teacher smartphones before term resumption.
+
+---
+
+## 5. Repository Structure
 
 ```
 sabisnap_adk_engine/
 ├── sabisnap_adk_pipeline.py   # Complete ADK multi-agent pipeline implementation
+├── sabisnap_batch_compiler.py # Gemini Batch API asynchronous curriculum compiler
+├── deploy_cloud_run.sh        # Bash deployment script with concurrency governance
 ├── Dockerfile                 # Cloud Run container definition
 ├── cloudbuild.yaml            # Google Cloud Build automated CI/CD pipeline
 ├── requirements.txt           # Python dependencies (google-adk, google-genai, etc.)
