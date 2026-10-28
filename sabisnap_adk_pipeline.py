@@ -39,6 +39,11 @@ if hasattr(sys.stdout, 'reconfigure'):
 import google.adk as adk
 from google.adk import Agent, Runner
 from google.adk.sessions import InMemorySessionService
+from google.adk.apps.app import App, ContextCacheConfig
+
+# Serverless HTTP & API Schema Imports (Google Cloud Run Entrypoint)
+from fastapi import FastAPI, HTTPException, Request
+from pydantic import BaseModel, Field
 
 # ======================================================================================
 # 1. STANDARDIZED NIGERIAN CURRICULUM (NERDC) REFERENCE DATABASE (MCP SIMULATOR)
@@ -313,13 +318,18 @@ def execute_sabisnap_pipeline(textbook_capture: Dict[str, str]) -> Dict[str, Any
     print(f"         Topic: {textbook_capture['topic']}")
     print("="*80)
     
-    # 1. Initialize ADK Architecture
+    # 1. Initialize ADK Architecture with Native Context Caching
     root_agent = build_sabisnap_adk_system()
     session_service = InMemorySessionService()
     
+    app_adk = App(
+        name="sabisnap_classroom_engine",
+        root_agent=root_agent,
+        context_cache_config=ContextCacheConfig(ttl_seconds=300)
+    )
+    
     runner = Runner(
-        agent=root_agent,
-        app_name="sabisnap_classroom_engine",
+        app=app_adk,
         session_service=session_service
     )
     
@@ -402,5 +412,74 @@ def main():
     print("="*80 + "\n")
 
 
+# ======================================================================================
+# 5. SERVERLESS FASTAPI SERVICE (GOOGLE CLOUD RUN HTTP DAEMON)
+# ======================================================================================
+
+fastapi_app = FastAPI(
+    title="SabiSnap ADK Serverless Multi-Agent Engine",
+    description="Google Cloud Run Serverless Ingestion Pipeline for SabiSnap Ltd (RC 9414613)",
+    version="2.12.0"
+)
+
+class IngestPayload(BaseModel):
+    subject: str = Field(..., description="Academic Subject", examples=["Basic Science & Technology"])
+    grade_level: str = Field(..., description="Target Class", examples=["Primary 4"])
+    topic: str = Field(..., description="Curriculum Topic / Keyword", examples=["Photosynthesis"])
+    ocr_snippet: Optional[str] = Field(None, description="Textbook camera OCR extract")
+
+@fastapi_app.get("/")
+@fastapi_app.get("/healthz")
+def health_check():
+    """Cloud Run container liveness and readiness probe."""
+    return {
+        "status": "HEALTHY",
+        "service": "sabisnap-adk-engine",
+        "platform": "Google Cloud Run (Serverless 2nd Gen)",
+        "adk_version": getattr(adk, "__version__", "2.12.0"),
+        "timestamp": datetime.datetime.now().isoformat()
+    }
+
+@fastapi_app.post("/api/v1/ingest")
+def api_ingest(payload: IngestPayload):
+    """Direct HTTP endpoint to trigger multi-agent lesson generation."""
+    try:
+        result = execute_sabisnap_pipeline(payload.model_dump())
+        return {"status": "SUCCESS", "data": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@fastapi_app.post("/api/v1/pubsub")
+async def pubsub_push_handler(request: Request):
+    """
+    Asynchronous Google Cloud Pub/Sub push trigger (Session 3: Zack Akil Architecture).
+    Decouples GCS textbook upload events from Gemini inference compute to prevent rate throttling.
+    """
+    import base64
+    body = await request.json()
+    message = body.get("message", {})
+    data_b64 = message.get("data")
+    if not data_b64:
+        raise HTTPException(status_code=400, detail="Missing Pub/Sub data payload")
+        
+    try:
+        decoded_bytes = base64.b64decode(data_b64)
+        payload = json.loads(decoded_bytes.decode("utf-8"))
+    except Exception as err:
+        raise HTTPException(status_code=400, detail=f"Failed to decode Pub/Sub envelope: {err}")
+        
+    result = execute_sabisnap_pipeline(payload)
+    return {"status": "SUCCESS_PUBSUB_PROCESSED", "data": result}
+
+
 if __name__ == '__main__':
-    main()
+    # Dual-Mode Execution:
+    # 1. CLI Audit Mode: python sabisnap_adk_pipeline.py --test
+    # 2. Cloud Run Server Mode: python sabisnap_adk_pipeline.py (Default Container CMD)
+    if len(sys.argv) > 1 and sys.argv[1] in ["--test", "test", "-t"]:
+        main()
+    else:
+        import uvicorn
+        port = int(os.environ.get("PORT", 8080))
+        print(f"\n[CLOUD RUN] Starting SabiSnap ADK HTTP Daemon on 0.0.0.0:{port}...")
+        uvicorn.run(fastapi_app, host="0.0.0.0", port=port)
