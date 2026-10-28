@@ -7,7 +7,7 @@ Architecture: Immersion Session 3 Alignment (Guidance by Zack Akil, Google Cloud
 
 Operational Context:
     In off-grid Nigerian classrooms, teachers require pre-compiled visual lesson packages
-    synced to their local edge device in Airplane Mode. 
+    synced to their local edge device for 100% offline playback. 
 
     Instead of making synchronous, expensive real-time API calls that can trigger 
     quota throttling (HTTP 429) during burst school onboarding, SabiSnap submits 
@@ -120,7 +120,7 @@ def simulate_batch_compilation_pipeline():
     print(f"2. Foundation Model: {MODEL_ID} (Batch Endpoint - 50% Token Discount)")
     print(f"3. Concurrency Impact: 0 RPM consumed against real-time quotas")
     print(f"4. Offline Destination: Local edge cache in offline_cache/*.sabisnap.json")
-    print(f"5. Result: Zero connectivity dependency for 40+ students in Airplane Mode")
+    print(f"5. Result: Zero connectivity dependency for 40+ students (100% offline edge execution)")
     print("------------------------------------------------------\n")
     
     # Clean up generated manifest file
