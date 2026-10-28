@@ -20,8 +20,8 @@ In Nigeria and across Sub-Saharan Africa, **over 105,000 public and low-fee priv
 ### Hardware Unit Economics (The Pass-Through Trojan Horse)
 * **Mini-Projector Unit Cost:** **$30 USD wholesale**.
 * **Zero Markup Pass-Through:** SabiSnap supplies mini-projectors to schools **at cost with 0.0% profit markup** as a hardware enabler.
-* **Recurring Software ARR:** Eliminating hardware friction unlocks the core recurring **$80 USD / classroom / term software subscription ($240 ARR)**.
-* **Validated Kaduna Pilot Proof:** Deployed across 3 schools in Kaduna (*Gracious Kids Academy*, *Precious Kids School*, *Beulah Schools*) using 3 founder-funded projectors ($90 total COGS), generating $240 in verified cash receipts.
+* **Recurring Software ARR:** Eliminating hardware friction unlocks the core recurring **$50 USD / classroom / term software subscription ($150 ARR per classroom)**.
+* **Validated Kaduna Pilot Proof:** Deployed across 3 schools in Kaduna (*Gracious Kids Academy*, *Precious Kids School*, *Beulah Schools*) using 3 founder-funded projectors ($90 total COGS), generating $150 in verified upfront cash receipts ($50 per pilot school, $60 net operating cash, zero corporate debt).
 
 ---
 
